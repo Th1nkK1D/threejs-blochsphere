@@ -1,0 +1,8 @@
+{
+  "name": "threejs-blochsphere",
+  "dependencies": {
+    "@tweenjs/tween.js": "^18",
+    "three": "^0.109.0"
+  },
+  "license": "MIT"
+}
