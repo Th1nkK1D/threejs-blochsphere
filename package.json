@@ -1,8 +1,15 @@
 {
   "name": "threejs-blochsphere",
+  "scripts": {
+    "dev" : "parcel src/index.html",
+    "build" : "parcel build src/index.html"
+  },
   "dependencies": {
     "@tweenjs/tween.js": "^18",
     "three": "^0.109.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
 }
