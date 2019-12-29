@@ -17,30 +17,32 @@ function animate() {
 	renderer.render(scene, camera)
 }
 
-function createLineFromOrigin(x, y, z, color) {
+function createUnitVectorLineFromOrigin(rad, psi, theta, color) {
     const geo = new THREE.Geometry()
 
     geo.vertices.push(
         new THREE.Vector3(0, 0, 0),
-        new THREE.Vector3(x, y, z),
+        new THREE.Vector3().setFromSphericalCoords(rad, psi, theta),
     )
 
     return new THREE.Line(
         geo,
-        new THREE.LineBasicMaterial( { color } )
+        new THREE.LineBasicMaterial({ color })
     )
 }
 
-const xAxisLine = createLineFromOrigin(2, 0, 0, 0xff0000)
-const yAxisLine = createLineFromOrigin(0, 2, 0, 0x00ff00)
-const zAxisLine = createLineFromOrigin(0, 0, 2, 0x0000ff)
+const xAxisLine = createUnitVectorLineFromOrigin(1.5, Math.PI/2, Math.PI/2, 0xff0000)
+const yAxisLine = createUnitVectorLineFromOrigin(1.5, 0, Math.PI/2, 0x00ff00)
+const zAxisLine = createUnitVectorLineFromOrigin(1.5, Math.PI/2, 0, 0x0000ff)
 
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(1, 90, 90),
     new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
 )
 
-const stateArrow = createLineFromOrigin(0, 0, 1, 0xffffff)
+let state = { psi: Math.PI/2, theta: 0 }
+
+const stateArrow = createUnitVectorLineFromOrigin(1, state.psi, state.theta, 0xffffff)
 
 scene
     .add(sphere)
@@ -49,18 +51,19 @@ scene
     .add(zAxisLine)
     .add(stateArrow)
 
-function rotateStateArrow(x, y, z, duration) {
-    new TWEEN.Tween(stateArrow.rotation)
-        .to({
-            x: stateArrow.rotation.x + x,
-            y: stateArrow.rotation.y + y,
-            z: stateArrow.rotation.z + z,
-        }, duration)
+function rotateStateArrow(psi, theta, duration) {
+    new TWEEN.Tween(state)
+        .to({ psi, theta }, duration)
+        .onUpdate(() => {
+            stateArrow.geometry.vertices[1].setFromSphericalCoords(1, state.psi, state.theta)
+            stateArrow.geometry.verticesNeedUpdate = true
+        })
         .easing(TWEEN.Easing.Quadratic.Out)
         .start();
 }
 
 window.sphere = {
     animate,
+    state,
     rotateStateArrow,
 }

@@ -11,9 +11,8 @@
 	</head>
 	<body style="width: 100vw; height: 100vh;">
 		<div style="position: absolute; z-index: 100; bottom: 10px; right: 10px;">
-			<button onclick="sphere.rotateStateArrow(Math.PI/2, 0, 0, 1000)">Rotate X</button>
-			<button onclick="sphere.rotateStateArrow(0, Math.PI/2, 0, 1000)">Rotate Y</button>
-			<button onclick="sphere.rotateStateArrow(0, 0, Math.PI/2, 1000)">Rotate Z</button>
+			<button onclick="sphere.rotateStateArrow(sphere.state.psi + Math.PI/2, sphere.state.theta, 1000)">Rotate &psi; by &pi;/2</button>
+			<button onclick="sphere.rotateStateArrow(sphere.state.psi, sphere.state.theta + Math.PI/2, 1000)">Rotate &theta; by &pi;/2</button>
 		</div>
 
 		<script src="./sphere.js"></script>
