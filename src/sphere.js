@@ -11,8 +11,13 @@ document.body.appendChild(renderer.domElement)
 camera.position.set(5, 5, 5)
 camera.lookAt(0, 0, 0)
 
-function animate() {
-    requestAnimationFrame(animate)
+function run() {
+    animateScene()
+    animateRipple()
+}
+
+function animateScene() {
+    requestAnimationFrame(animateScene)
     TWEEN.update()
 	renderer.render(scene, camera)
 }
@@ -44,14 +49,17 @@ let state = { psi: Math.PI/2, theta: 0 }
 
 const stateArrow = createUnitVectorLineFromOrigin(1, state.psi, state.theta, 0xffffff)
 
-const circleGeo = new THREE.CircleGeometry(1, 64)
+const rippleRadius = { value: 1 }
+const circleGeo = new THREE.CircleGeometry(1.01, 64)
 
 circleGeo.vertices.shift()
 
 const ripple = new THREE.LineLoop(
     circleGeo,
-    new THREE.LineBasicMaterial({ color: 0xffff00 })
+    new THREE.LineBasicMaterial({ color: 0xffff00, transparent: true })
 )
+
+ripple.position.setFromSphericalCoords(rippleRadius.value, state.psi, state.theta)
 
 scene
     .add(sphere)
@@ -68,16 +76,26 @@ function rotateStateArrow(psi, theta, duration) {
             stateArrow.geometry.vertices[1].setFromSphericalCoords(1, state.psi, state.theta)
             stateArrow.geometry.verticesNeedUpdate = true
         })
-        .onComplete(() => ripple.lookAt(stateArrow.geometry.vertices[1]))
         .easing(TWEEN.Easing.Quadratic.Out)
         .start()
 }
 
-window.sphere = {
-    animate,
-    state,
-    rotateStateArrow,
-    stateArrow
+function animateRipple() {
+    new TWEEN.Tween(rippleRadius)
+        .to({ value: 0 }, 2000)
+        .onUpdate(() => {
+            ripple.lookAt(stateArrow.geometry.vertices[1])
+            ripple.position.setFromSphericalCoords(rippleRadius.value, state.psi, state.theta)
+            ripple.scale.setScalar(Math.sqrt(1-rippleRadius.value*rippleRadius.value))
+            ripple.material.opacity = rippleRadius.value
+        })
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .repeat(Infinity)
+        .start()
 }
 
-window.THREE = THREE
+window.sphere = {
+    run,
+    state,
+    rotateStateArrow,
+}
