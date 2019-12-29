@@ -44,12 +44,22 @@ let state = { psi: Math.PI/2, theta: 0 }
 
 const stateArrow = createUnitVectorLineFromOrigin(1, state.psi, state.theta, 0xffffff)
 
+const circleGeo = new THREE.CircleGeometry(1, 64)
+
+circleGeo.vertices.shift()
+
+const ripple = new THREE.LineLoop(
+    circleGeo,
+    new THREE.LineBasicMaterial({ color: 0xffff00 })
+)
+
 scene
     .add(sphere)
     .add(xAxisLine)
     .add(yAxisLine)
     .add(zAxisLine)
     .add(stateArrow)
+    .add(ripple)
 
 function rotateStateArrow(psi, theta, duration) {
     new TWEEN.Tween(state)
@@ -58,12 +68,16 @@ function rotateStateArrow(psi, theta, duration) {
             stateArrow.geometry.vertices[1].setFromSphericalCoords(1, state.psi, state.theta)
             stateArrow.geometry.verticesNeedUpdate = true
         })
+        .onComplete(() => ripple.lookAt(stateArrow.geometry.vertices[1]))
         .easing(TWEEN.Easing.Quadratic.Out)
-        .start();
+        .start()
 }
 
 window.sphere = {
     animate,
     state,
     rotateStateArrow,
+    stateArrow
 }
+
+window.THREE = THREE
