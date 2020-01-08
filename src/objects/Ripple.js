@@ -15,16 +15,16 @@ class Ripple extends LineLoop {
         this.rippleRadius = { value: radius }
     }
 
-    setPositionFromSphericalCoords(psi, theta) {
-        this.position.setFromSphericalCoords(this.rippleRadius.value, psi, theta)
-    }
-
     animateFromVector(vectorFromOrigin) {
         new TWEEN.Tween(this.rippleRadius)
             .to({ value: 0 }, 2000)
             .onUpdate(() => {
                 this.lookAt(vectorFromOrigin.geometry.vertices[1])
-                this.position.setFromSphericalCoords(this.rippleRadius.value, vectorFromOrigin.state.psi, vectorFromOrigin.state.theta)
+                this.position.setFromSphericalCoords(
+                    this.rippleRadius.value,
+                    vectorFromOrigin.state.psi,
+                    vectorFromOrigin.state.theta
+                )
                 this.scale.setScalar(Math.sqrt(1-this.rippleRadius.value*this.rippleRadius.value))
                 this.material.opacity = this.rippleRadius.value
             })
