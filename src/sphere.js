@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import TWEEN from '@tweenjs/tween.js'
 
+import UnitSphere from './objects/UnitSphere'
+
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000)
 const renderer = new THREE.WebGLRenderer()
@@ -40,10 +42,7 @@ const xAxisLine = createUnitVectorLineFromOrigin(1.5, Math.PI/2, Math.PI/2, 0xff
 const yAxisLine = createUnitVectorLineFromOrigin(1.5, 0, Math.PI/2, 0x00ff00)
 const zAxisLine = createUnitVectorLineFromOrigin(1.5, Math.PI/2, 0, 0x0000ff)
 
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 90, 90),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
-)
+const sphere = new UnitSphere({ color: 0xffffff, transparent: true, opacity: 0.3 })
 
 let state = { psi: Math.PI/2, theta: 0 }
 
