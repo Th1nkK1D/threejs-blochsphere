@@ -15,14 +15,17 @@ class VectorFromOrigin extends Line {
     }
 
     rotateToSphericalCoords(psi, theta, duration) {
-        new TWEEN.Tween(this.state)
-            .to({ psi, theta }, duration)
-            .onUpdate(() => {
-                this.geometry.vertices[1].setFromSphericalCoords(1, this.state.psi, this.state.theta)
-                this.geometry.verticesNeedUpdate = true
-            })
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .start()
+        return new Promise((resolve, reject) => {
+            new TWEEN.Tween(this.state)
+                .to({ psi, theta }, duration)
+                .onUpdate(() => {
+                    this.geometry.vertices[1].setFromSphericalCoords(1, this.state.psi, this.state.theta)
+                    this.geometry.verticesNeedUpdate = true
+                })
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onComplete(resolve)
+                .start()
+        })
     }
 }
 
