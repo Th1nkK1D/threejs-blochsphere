@@ -3,26 +3,23 @@ import TWEEN from '@tweenjs/tween.js'
 
 class ArcLine extends Line {
     constructor(material) {
-        const geo = new Geometry()
-
-        geo.vertices.push(
-            new Vector3(),
-            new Vector3(),
-        )
-
-        super(geo, new LineBasicMaterial(material))
+        super(new Geometry(), new LineBasicMaterial(material))
     }
 
     expandTo(fromSpericalCoords, toSpericalCoords, duration) {
-        this.geometry.vertices.forEach(vertice =>
-            vertice.setFromSphericalCoords(1, fromSpericalCoords.psi, fromSpericalCoords.theta)
-        )
+        const currentSpericalCoords = { ...fromSpericalCoords }
+
+        this.geometry.vertices = []
 
         return new Promise((resolve, reject) => {
-            new TWEEN.Tween(this.geometry.vertices[1])
-                .to(new Vector3().setFromSphericalCoords(1, toSpericalCoords.psi, toSpericalCoords.theta), duration)
+            new TWEEN.Tween(currentSpericalCoords)
+                .to(toSpericalCoords, duration)
                 .onUpdate(() => {
-                    this.geometry.verticesNeedUpdate = true
+                    const geo = new Geometry()
+
+                    geo.vertices = [...this.geometry.vertices, new Vector3().setFromSphericalCoords(1, currentSpericalCoords.psi, currentSpericalCoords.theta)]
+                    this.geometry.dispose()
+                    this.geometry = geo
                 })
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onComplete(resolve)
