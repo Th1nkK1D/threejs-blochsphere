@@ -3,7 +3,7 @@ import Ripple from './src/objects/Ripple'
 import UnitSphere from './src/objects/UnitSphere'
 import VectorFromOrigin from './src/objects/VectorFromOrigin'
 
-export default blochSphereComponents = {
+export {
     ArcLine,
     Ripple,
     UnitSphere,
